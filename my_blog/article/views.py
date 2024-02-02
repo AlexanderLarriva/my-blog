@@ -1,7 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse
-from django.shortcuts import redirect
+
+from my_blog.article.models import Article
+
+class ArticleView(View):
+
+    def get(self, request, *args, **kwargs):
+        article = get_object_or_404(Article, id=kwargs['id'])
+        return render(request, 'articles/show.html', context={
+            'article': article,
+        })
+
+
+
 # from django.http import HttpResponse
 
 # Create your views here.
@@ -9,9 +21,9 @@ from django.shortcuts import redirect
 #     # return HttpResponse('article')
 #     return render(request, '.html', context={name})
 
-# def index(request):
+# def HomeArticle(request):
 #     name = 'my_blog.article'
-#     return render(request, 'articles/index.html', context = {'app_name': name})
+#     return render(request, 'articles/index.html', context = {'result_text': name})
 
 
 class index(View):
@@ -25,6 +37,15 @@ class index(View):
         # просто формируем текст с использованием этих параметров
         result_text = f"Статья номер {article_id}. Тег {tags}"
         return render(request, 'articles/index.html', context={'result_text': result_text})
+    
+
+class IndexView(View):
+    
+    def get(self, request, *args, **kwargs):
+        articles = Article.objects.all()[:15]
+        return render(request, 'articles/index.html', context={
+            'articles': articles,
+        })
     
     
 
